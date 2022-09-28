@@ -67,6 +67,7 @@ class ConcreteSubject extends Subject {
     this.element = element;
 
     this.element.onclick = () => {
+      console.log(this.element);
       this.notify(this.element);
     };
   }
@@ -76,6 +77,7 @@ class ConcreteSubject extends Subject {
 class ConcreteObserver extends Observer {
   constructor(element) {
     super();
+    // input
     this.element = element;
   }
 
@@ -84,32 +86,30 @@ class ConcreteObserver extends Observer {
   }
 }
 
+const list = document.getElementById("list");
 const subjectInput = document.getElementById("todo-input");
 const checkBoxObserver = new ConcreteSubject(
   document.getElementById("checkAll")
 );
+const observersContainer = document.getElementById("list");
 
 subjectInput.addEventListener("keypress", (evt) => {
   if (evt.code === "Enter") {
     let listItem = document.createElement("li"); // <li className="list-items"><input type='checkbox'  id='checkbox-${list.childNodes.length}' class='checkbox'/> <span class='todo-item'>${todoInput.value}</span></li>
     listItem.className = "list-items";
-    listItem.innerHTML = `<input type='checkbox'  id='checkbox-${list.childNodes.length}' class='checkbox'/> <span class='todo-item'>${subjectInput.value}</span>`;
-    list.appendChild(listItem);
-    const listItemID = document.getElementById(
-      `checkbox-${list.childNodes.length}`
-    );
-    const newObserver = new ConcreteObserver(listItemID);
-    const newCheckBoxObserver = new ConcreteObserver(newObserver);
-    checkBoxObserver.addObserver(newCheckBoxObserver);
-    //observersContainer.append(newObserver);
-    // subjectInput.value = "";
-    // let taskDone = lis;
-    // taskCount.innerHTML = list.childNodes.length;
-    // console.log(taskDone.length);
-    // const testDivs = Array.prototype.filter.call(
-    //   taskDone,
-    //   (testElement) => testElement.checked == true
-    // );
-    // taskRem.innerHTML = list.childNodes.length - testDivs.length;
+    const newCheckBox = document.createElement("input");
+    newCheckBox.type = "checkbox";
+    newCheckBox.id = `checkbox-${list.childNodes.length}`;
+    const span = document.createElement("span");
+    span.className = "todo-item";
+    span.innerText = subjectInput.value;
+    listItem.append(newCheckBox);
+    listItem.append(span);
+    observersContainer.append(listItem);
+
+    const newObserver = new ConcreteObserver(newCheckBox);
+    checkBoxObserver.addObserver(newObserver);
+
+    subjectInput.value = "";
   }
 });
